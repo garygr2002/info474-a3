@@ -14,7 +14,7 @@ just_heart_disease <- data_frame[data_frame$Cause.Name == 'Diseases of Heart',
 # Rename the columns.
 colnames(just_heart_disease) <- c('year', 'state', 'count', 'rate')
 
-# Remove 'United State'
+# Remove the whole 'United States'.
 just_heart_disease <- just_heart_disease[just_heart_disease$state != 'United States',]
 
 # Read the state ID file, and merge it with the heart disease data.
@@ -30,5 +30,5 @@ just_heart_disease <- just_heart_disease[order(just_heart_disease$id,
                                                just_heart_disease$state,
                                                just_heart_disease$year), ]
 
-# Write out the file new file.
+# Write out the new heart disease file.
 write.csv(just_heart_disease, file = 'heart_disease.csv', row.names = F)
