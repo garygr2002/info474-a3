@@ -1,0 +1,117 @@
+<html>
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.states {
+  fill: #ccc;
+  stroke: #fff;
+}
+
+.symbol {
+  fill-opacity: .8;
+  stroke: #fff;
+}
+
+</style>
+<body>
+<!--Rather than loading v3 or v4, loading individual modules to ensure compatibility with v4 functions (loads newest version of each)-->
+<script src="https://d3js.org/d3-geo.v1.min.js"></script>
+<script src="https://d3js.org/d3-selection.v1.min.js"></script>
+<script src="https://d3js.org/d3-array.v1.min.js"></script>
+<script src="http://d3js.org/topojson.v1.min.js"></script>
+<script src="https://d3js.org/d3-collection.v0.1.min.js"></script>
+<script src="https://d3js.org/d3-dispatch.v0.4.min.js"></script>
+<script src="https://d3js.org/d3-dsv.v0.3.min.js"></script>
+<script src="https://d3js.org/d3-request.v0.4.min.js"></script>
+<script src="https://d3js.org/d3-queue.v3.min.js"></script>
+<script>
+
+var outColor = "green", outRadius = 10, overColor = "red", overRadius = 10;
+
+var width = 960,
+    height = 500;
+
+var projection = d3.geoAlbersUsa();
+var path = d3.geoPath()
+	.projection(projection);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+var formatter = new Intl.NumberFormat();
+
+// load up the json files, and when we're done, call ready
+d3.queue()
+    .defer(d3_request.json, "states.json")
+    .defer(d3_request.json, "us-state-centroids.json")
+    .await(ready);
+
+// keep these around for later
+var us,centroid;
+
+function ready(error, u, c) {
+
+  // store the values so we can use them later
+   states = u
+   centroid = c
+
+  // draw the states
+  svg.append("path")
+      .attr("class", "states")
+      .datum(topojson.feature(states, states.objects.usStates))
+      .attr("d", path);
+
+
+  // draw the symbols on top
+  	svg.selectAll(".symbol")
+      		.data(centroid.features.sort(function(a, b) { return b.properties.population - a.properties.population; }))
+    		.enter().append("path")
+      		.attr("class", "symbol")
+      		.attr("fill",outColor)
+      		.attr("d", path.pointRadius(function(d) { return outRadius; }))
+                .on("mouseover", function(d, i) {
+
+                  d3.select(this)
+                    .attr("fill", overColor)
+      		    .attr("d", path.pointRadius(function(d) { return overRadius; }))
+                    .append("svg:title")
+                    .text(function(d, i) { return d.properties.name + "\n" + formatter.format(d.properties.population); });
+                })
+                .on("mouseout", function(d, i) {
+
+                  d3.select(this)
+                    .attr("fill", outColor)
+      		    .attr("d", path.pointRadius(function(d) { return outRadius; }));
+                });
+}
+
+function recolor(color) {
+
+  // grab the symbol objects and modify their color 
+  // notice we don't need "enter" or "append" the objects are already there
+   svg.selectAll(".symbol")
+      .attr("fill",color);
+}
+
+function mapPopulationToSize() {
+
+   svg.selectAll(".symbol")
+      .attr("d", path.pointRadius(function(d) {
+          return 15;
+      }));
+}
+
+</script>
+
+<FORM>
+<INPUT TYPE="Button" value="Reset"/>
+<INPUT TYPE="Button" value="Map Population to Color"/>
+<INPUT TYPE="Button" value="Map Population to Size", onclick="mapPopulationToSize()"/>
+<INPUT TYPE="Button" value="Map Population to Color and Size"/>
+</FORM>
+
+</body>
+</html>
+
