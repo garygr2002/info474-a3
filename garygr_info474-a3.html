@@ -19,6 +19,10 @@
 <script src="https://d3js.org/topojson.v2.min.js"></script>
 <script>
 
+var my_max = 350;
+var my_us;
+var my_year = 1999;
+
 var svg = d3.select("svg"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
@@ -29,7 +33,7 @@ var path = d3.geoPath();
 
 var x = d3.scaleLinear()
     .domain([1, 10])
-    .rangeRound([600, 860]);
+    .rangeRound([400, 860]);
 
 var color = d3.scaleThreshold()
     .domain(d3.range(2, 10))
@@ -59,7 +63,7 @@ g.append("text")
     .attr("fill", "#000")
     .attr("text-anchor", "start")
     .attr("font-weight", "bold")
-    .text("Death Rate from Heart Disease (as a fraction of 350 per 100,000)");
+    .text("Death Rate from Heart Disease (as a fraction of " + my_max + " persons per 100,000); Year shown is " + my_year);
 
 g.call(d3.axisBottom(x)
     .tickSize(13)
@@ -70,21 +74,26 @@ g.call(d3.axisBottom(x)
 
 d3.queue()
     .defer(d3.json, "https://d3js.org/us-10m.v1.json")
-    .defer(d3.csv, "heart_disease.csv", function(d) { heart_disease.set(d.id + d.year, +(d.rate / 35.)); })
+    .defer(d3.csv, "heart_disease.csv", function(d) { heart_disease.set(d.id + d.year, +(d.rate * 10. / my_max)); })
     .await(ready);
 
 function ready(error, us, disease) {
+
   if (error) throw error;
+  my_us = us;
+  do_draw();
+}
+
+function do_draw() {
 
   svg.append("g")
       .attr("class", "states")
     .selectAll("path")
-    .data(topojson.feature(us, us.objects.states).features)
+    .data(topojson.feature(my_us, my_us.objects.states).features)
     .enter().append("path")
       .attr("fill", function(d) {
 
-          my_rate = heart_disease.get(d.id + "1999")
-          console.log(my_rate)
+          my_rate = heart_disease.get(d.id + my_year)
           return color(d.rate = my_rate);
       })
       .attr("d", path)
@@ -92,10 +101,34 @@ function ready(error, us, disease) {
       .text(function(d) { return d.rate + "%"; });
 
   svg.append("path")
-      .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+      .datum(topojson.mesh(my_us, my_us.objects.states, function(a, b) { return a !== b; }))
       .attr("class", "states")
       .attr("d", path);
 }
 
 </script>
+
+<html>
+<FORM>
+<INPUT TYPE="Button" value="1999"/>
+<INPUT TYPE="Button" value="2000"/>
+<INPUT TYPE="Button" value="2001"/>
+<INPUT TYPE="Button" value="2002"/>
+<INPUT TYPE="Button" value="2003"/>
+<INPUT TYPE="Button" value="2004"/>
+<INPUT TYPE="Button" value="2005"/>
+<INPUT TYPE="Button" value="2006"/>
+<INPUT TYPE="Button" value="2007"/>
+<INPUT TYPE="Button" value="2008"/>
+<INPUT TYPE="Button" value="2009"/>
+<INPUT TYPE="Button" value="2010"/>
+<INPUT TYPE="Button" value="2011"/>
+<INPUT TYPE="Button" value="2012"/>
+<INPUT TYPE="Button" value="2013"/>
+<INPUT TYPE="Button" value="2014"/>
+<INPUT TYPE="Button" value="2015"/>
+</FORM>
+
+</body>
+</html>
 
