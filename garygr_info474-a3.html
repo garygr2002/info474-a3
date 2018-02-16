@@ -23,7 +23,7 @@ var svg = d3.select("svg"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
 
-// var unemployment = d3.map();
+var heart_disease = d3.map();
 
 var path = d3.geoPath();
 
@@ -33,7 +33,7 @@ var x = d3.scaleLinear()
 
 var color = d3.scaleThreshold()
     .domain(d3.range(2, 10))
-    .range(d3.schemeBlues[9]);
+    .range(d3.schemeReds[9]);
 
 var g = svg.append("g")
     .attr("class", "key")
@@ -59,21 +59,21 @@ g.append("text")
     .attr("fill", "#000")
     .attr("text-anchor", "start")
     .attr("font-weight", "bold")
-    .text("Unemployment rate");
+    .text("Death Rate from Heart Disease (as a fraction of 350 per 100,000)");
 
 g.call(d3.axisBottom(x)
     .tickSize(13)
-    .tickFormat(function(x, i) { return i ? x : x + "%"; })
+    .tickFormat(function(x, i) { return x / 10.; })
     .tickValues(color.domain()))
   .select(".domain")
     .remove();
 
 d3.queue()
     .defer(d3.json, "https://d3js.org/us-10m.v1.json")
-    // .defer(d3.tsv, "unemployment.tsv", function(d) { unemployment.set(d.id, +d.rate); })
+    .defer(d3.csv, "heart_disease.csv", function(d) { heart_disease.set(d.id + d.year, +(d.rate / 35.)); })
     .await(ready);
 
-function ready(error, us) {
+function ready(error, us, disease) {
   if (error) throw error;
 
   svg.append("g")
@@ -83,14 +83,9 @@ function ready(error, us) {
     .enter().append("path")
       .attr("fill", function(d) {
 
-          // console.log(d);
-          if(d.id === "05") {
-              return "blue";
-          }
-
-          else {
-              return "red";
-          }
+          my_rate = heart_disease.get(d.id + "1999")
+          console.log(my_rate)
+          return color(d.rate = my_rate);
       })
       .attr("d", path)
     .append("title")
