@@ -63,7 +63,7 @@ g.append("text")
     .attr("fill", "#000")
     .attr("text-anchor", "start")
     .attr("font-weight", "bold")
-    .text("Death Rate from Heart Disease (as a fraction of " + my_max + " persons per 100,000); Year shown is " + my_year);
+    .text("Death Rate from Heart Disease (as a fraction of " + my_max + " persons per 100,000)");
 
 g.call(d3.axisBottom(x)
     .tickSize(13)
@@ -106,27 +106,38 @@ function do_draw() {
       .attr("d", path);
 }
 
+function set_year_and_draw(year) {
+
+    my_year = year;
+    document.getElementById("year_label").innerHTML = "Currently displayed year is: " + my_year + ".";
+    do_draw();
+}
+
 </script>
 
 <html>
 <FORM>
-<INPUT TYPE="Button" value="1999"/>
-<INPUT TYPE="Button" value="2000"/>
-<INPUT TYPE="Button" value="2001"/>
-<INPUT TYPE="Button" value="2002"/>
-<INPUT TYPE="Button" value="2003"/>
-<INPUT TYPE="Button" value="2004"/>
-<INPUT TYPE="Button" value="2005"/>
-<INPUT TYPE="Button" value="2006"/>
-<INPUT TYPE="Button" value="2007"/>
-<INPUT TYPE="Button" value="2008"/>
-<INPUT TYPE="Button" value="2009"/>
-<INPUT TYPE="Button" value="2010"/>
-<INPUT TYPE="Button" value="2011"/>
-<INPUT TYPE="Button" value="2012"/>
-<INPUT TYPE="Button" value="2013"/>
-<INPUT TYPE="Button" value="2014"/>
-<INPUT TYPE="Button" value="2015"/>
+
+<LABEL style="font-weight:bold" id=year_label>Currently displayed year is 1999.</LABEL>
+<br/><br/>
+<INPUT TYPE="Button" value="1999", onclick="set_year_and_draw(1999)"}/>
+<INPUT TYPE="Button" value="2000", onclick="set_year_and_draw(2000)"}/>
+<INPUT TYPE="Button" value="2001", onclick="set_year_and_draw(2001)"}/>
+<INPUT TYPE="Button" value="2002", onclick="set_year_and_draw(2002)"}/>
+<INPUT TYPE="Button" value="2003", onclick="set_year_and_draw(2003)"}/>
+<INPUT TYPE="Button" value="2004", onclick="set_year_and_draw(2004)"}/>
+<INPUT TYPE="Button" value="2005", onclick="set_year_and_draw(2005)"}/>
+<INPUT TYPE="Button" value="2006", onclick="set_year_and_draw(2006)"}/>
+<INPUT TYPE="Button" value="2007", onclick="set_year_and_draw(2007)"}/>
+<INPUT TYPE="Button" value="2008", onclick="set_year_and_draw(2008)"}/>
+<INPUT TYPE="Button" value="2009", onclick="set_year_and_draw(2009)"}/>
+<INPUT TYPE="Button" value="2010", onclick="set_year_and_draw(2010)"}/>
+<INPUT TYPE="Button" value="2011", onclick="set_year_and_draw(2011)"}/>
+<INPUT TYPE="Button" value="2012", onclick="set_year_and_draw(2012)"}/>
+<INPUT TYPE="Button" value="2013", onclick="set_year_and_draw(2013)"}/>
+<INPUT TYPE="Button" value="2014", onclick="set_year_and_draw(2014)"}/>
+<INPUT TYPE="Button" value="2015", onclick="set_year_and_draw(2015)"}/>
+
 </FORM>
 
 </body>
